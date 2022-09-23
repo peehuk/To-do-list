@@ -1,25 +1,106 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
-function App() {
+const List = () => {
+  const [tasks, setTasks] = useState([
+    {
+      title: "Attend meeting",
+      status: 0
+    },
+    {
+      title: "Do laundry",
+      status: 1
+    },
+    {
+      title: "Complete Assignments",
+      status: 1
+    },
+    {
+      title: "Bake cookies",
+      status: 0
+    }
+  ]);
+  const [task, setTask] = useState("");
+  const [index1, setIndex1] = useState(0);
+
+  const typeTask = (element) => {
+    setTask(element.target.value);
+  };
+
+  const changeStatus = (index) => {
+    let newTasks = [...tasks];
+    newTasks[index].status = !newTasks[index].status;
+    setTasks(newTasks);
+  };
+
+  const addEditTask = (index, remove) => {
+    if (task && !index && typeof index === "undefined") {
+      setTasks([...tasks, { title: task, status: 0 }]);
+      setTask("");
+    } else {
+      let allTasks = [...tasks];
+      if (!remove) {
+        setTask(allTasks[index].title);
+        allTasks[index].title = task;
+      } else {
+        allTasks.splice(index, 1);
+      }
+      console.log("allTasks", allTasks);
+      setTasks(allTasks);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h3>MY TO DO LIST:</h3>
+      <input
+        name="input_task"
+        placeholder="Add your task here"
+        onChange={(element) => {
+          typeTask(element);
+        }}
+        value={task}
+      />
+
+      <button onClick={() => addEditTask(index1)}>Submit</button>
+
+      <ul>
+        {tasks.map((item, index) => {
+          return (
+            <li
+              key={index}
+              style={{ textDecoration: item.status ? "line-through" : "" }}
+            >
+              {index + 1} - {item.title}{" "}
+              <button
+                onClick={() => {
+                  changeStatus(index);
+                }}
+              >
+                {" "}
+                Completed
+              </button>
+              <button
+                onClick={() => {
+                  setIndex1(index);
+                  addEditTask(index);
+                }}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => {
+                  setIndex1(index);
+                  addEditTask(index, 1);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
-}
-
-export default App;
+};
+export default List;
